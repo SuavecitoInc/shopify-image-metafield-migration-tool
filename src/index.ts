@@ -170,8 +170,9 @@ async function processProduct(product: Product) {
       productMetafields,
       product.id,
     );
-    // console.log('UPDATED PRODUCT', JSON.stringify(productResponse, null, 2));
+
     logMetafieldUpdateData(productResponse);
+
     if (productResponse.data.metafieldsSet.metafields.length) {
       processingResponse.product = true;
       // write to file
@@ -229,8 +230,9 @@ async function processProduct(product: Product) {
         variantMetafields,
         variant.node.id,
       );
-      // console.log('UPDATED VARIANT', JSON.stringify(variantResponse, null, 2));
+
       logMetafieldUpdateData(variantResponse);
+
       if (variantResponse.data.metafieldsSet.metafields.length) {
         processingResponse.variants = true;
         // write to file
@@ -284,7 +286,6 @@ async function getAllProducts() {
     });
 
     const processed = await Promise.all(processing);
-    // console.log('Processed', processed.length, 'products');
     count += processed.length;
 
     if (hasNextPage) {
@@ -360,10 +361,10 @@ async function main() {
     ]);
 
     // run one product
-    await getProduct('gid://shopify/Product/8876633588033');
+    // await getProduct('gid://shopify/Product/8876633588033');
 
     // run all products
-    // await getAllProducts();
+    await getAllProducts();
   } catch (err: any) {
     console.log('ERROR', err);
   }
