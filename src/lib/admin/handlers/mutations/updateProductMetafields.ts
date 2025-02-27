@@ -12,6 +12,7 @@ const mutation = `#graphql
           ... on Product {
             id
             title
+            handle
             variants(first: 100) {
               edges {
                 node {
