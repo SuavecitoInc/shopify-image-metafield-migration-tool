@@ -10,6 +10,7 @@ export default {
   schema: `https://shopify.dev/admin-graphql-direct-proxy/${API_VERSION}`,
   // documents: ['./app/**/*.{js,ts,jsx,tsx}'],
   documents: [
+    './src/lib/admin/handlers/fragments.ts',
     './src/lib/admin/handlers/mutations/*.ts',
     './src/lib/admin/handlers/queries/*.ts',
   ],
@@ -19,6 +20,7 @@ export default {
       apiType: ApiType.Admin,
       apiVersion: API_VERSION,
       documents: [
+        './src/lib/admin/handlers/fragments.ts',
         './src/lib/admin/handlers/mutations/*.ts',
         './src/lib/admin/handlers/queries/*.ts',
       ],
