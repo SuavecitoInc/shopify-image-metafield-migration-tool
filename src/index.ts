@@ -4,7 +4,13 @@ import type {
   UpdateProductMetafieldsMutation,
   UpdateVariantMetafieldsMutation,
 } from './lib/types/admin.generated';
-import { shopifyAdmin, writeToFile, verifyConfig } from './lib/utils';
+import {
+  shopifyAdmin,
+  verifyConfig,
+  createCsvFile,
+  appendCsvFile,
+  logMetafieldUpdateData,
+} from './lib/utils';
 import {
   getProducts as GetProducts,
   getProduct as GetProduct,
@@ -25,6 +31,9 @@ type Metafield = {
   type: string;
   value: string;
 };
+
+let productsFilename = 'migrated-products_';
+let variantsFilename = 'migrated-variants_';
 
 async function updateProductMetafields(
   metafields: {
@@ -161,9 +170,21 @@ async function processProduct(product: Product) {
       productMetafields,
       product.id,
     );
-    console.log('UPDATED PRODUCT', JSON.stringify(productResponse, null, 2));
+    // console.log('UPDATED PRODUCT', JSON.stringify(productResponse, null, 2));
+    logMetafieldUpdateData(productResponse);
     if (productResponse.data.metafieldsSet.metafields.length) {
       processingResponse.product = true;
+      // write to file
+      await appendCsvFile(
+        productsFilename,
+        productResponse.data.metafieldsSet.metafields.map((metafield) => ({
+          id: product.id,
+          title: product.title,
+          handle: product.handle,
+          metafield: metafield.key,
+          value: metafield.value,
+        })),
+      );
     }
   }
 
@@ -208,9 +229,21 @@ async function processProduct(product: Product) {
         variantMetafields,
         variant.node.id,
       );
-      console.log('UPDATED VARIANT', JSON.stringify(variantResponse, null, 2));
+      // console.log('UPDATED VARIANT', JSON.stringify(variantResponse, null, 2));
+      logMetafieldUpdateData(variantResponse);
       if (variantResponse.data.metafieldsSet.metafields.length) {
         processingResponse.variants = true;
+        // write to file
+        await appendCsvFile(
+          variantsFilename,
+          variantResponse.data.metafieldsSet.metafields.map((metafield) => ({
+            id: variant.node.id,
+            sku: variant.node.sku,
+            title: variant.node.title,
+            metafield: metafield.key,
+            value: metafield.value,
+          })),
+        );
       }
     }
     return processingResponse;
@@ -303,11 +336,34 @@ async function main() {
 
     console.log("Config is valid, let's proceed");
 
+    // generate file name
+    const date = new Date();
+    const dateString = date.toISOString().split('T')[0];
+    productsFilename += dateString;
+    variantsFilename += dateString;
+
+    // create files
+    console.log('Creating files');
+    await createCsvFile(productsFilename, [
+      'id',
+      'title',
+      'handle',
+      'metafield',
+      'value',
+    ]);
+    await createCsvFile(variantsFilename, [
+      'id',
+      'sku',
+      'title',
+      'metafield',
+      'value',
+    ]);
+
     // run one product
-    // await getProduct('gid://shopify/Product/8876066898241');
+    await getProduct('gid://shopify/Product/8876633588033');
 
     // run all products
-    await getAllProducts();
+    // await getAllProducts();
   } catch (err: any) {
     console.log('ERROR', err);
   }
