@@ -39,7 +39,7 @@ npm run images
 
 ## Rename Metafields Migration
 
-You can't rename a metafield namespace or key directly. This migration copies the value of an existing metafield to a new one. Once the migration is complete, you can safely delete the old metafield and its values.
+You can't rename a metafield namespace or key directly. This migration copies the value of an existing metafield to a new one. Once the migration is complete, you can safely delete the old metafield and its values. Please make sure the values were set before deleting the old metafields.
 
 A configuration is used to retrieve the old metafield values. The migration updates one product metafield and one variant metafield at a time. If you only need to update a product metafield, set the old variant namespace or key to a non-existent value. This will return null, preventing the variant metafield from being set. The same applies if you're only updating a variant metafield set the old product namespace or key to a non-existent value.
 
