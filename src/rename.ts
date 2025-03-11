@@ -20,6 +20,7 @@ import {
   updateProductMetafields as MutationUpdateProductMetafields,
 } from './lib/admin/handlers/mutations';
 
+// https://shopify.dev/docs/apps/build/custom-data/metafields/list-of-data-types
 const CONFIG = {
   product: {
     old: {
@@ -36,13 +37,13 @@ const CONFIG = {
   variant: {
     old: {
       namespace: 'debut',
-      key: 'exclude_variant_online',
-      type: 'boolean',
+      key: 'variant_fragrance_profile',
+      type: 'single_line_text_field', // boolean | single_line_text_field | rich_text_field
     },
     new: {
       namespace: 'suavecito',
-      key: 'exclude_variant_online',
-      type: 'boolean',
+      key: 'option_profile',
+      type: 'single_line_text_field', // boolean | single_line_text_field | rich_text_field
     },
   },
 };
@@ -341,8 +342,8 @@ async function main() {
     // generate file name
     const date = new Date();
     const dateString = date.toISOString().split('T')[0];
-    productsFilename += dateString;
-    variantsFilename += dateString;
+    productsFilename += `${CONFIG.product.new.namespace}_${CONFIG.product.new.key}--${dateString}`;
+    variantsFilename += `${CONFIG.variant.new.namespace}_${CONFIG.variant.new.key}--${dateString}`;
 
     // create files
     console.log('Creating files');
